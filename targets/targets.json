@@ -1,0 +1,84 @@
+{
+  "Bernie Sanders": [{
+    "id": 1068187760853422100,
+    "screen_name": "OFB2020",
+    "name": "Organizing for Bernie",
+    "relation": "official"
+  }, {
+    "id": 216776631,
+    "screen_name": "BernieSanders",
+    "name": "Bernie Sanders",
+    "relation": "official"
+  }, {
+    "id": 3141672447,
+    "screen_name": "People4Bernie",
+    "name": "People For Bernie",
+    "relation": "official"
+  }, {
+    "id": 29442313,
+    "screen_name": "SenSanders",
+    "name": "Bernie Sanders",
+    "relation": "official"
+  }],
+  "Elizabeth Warren": [{
+    "id": 970207298,
+    "screen_name": "SenWarren",
+    "name": "Elizabeth Warren",
+    "relation": "official"
+  }, {
+    "id": 357606935,
+    "screen_name": "ewarren",
+    "name": "Elizabeth Warren",
+    "relation": "official"
+  }],
+  "Sherrod Brown": [{
+    "id": 43910797,
+    "screen_name": "SenSherrodBrown",
+    "name": "Sherrod Brown",
+    "relation": "official"
+  }, {
+    "id": 24768753,
+    "screen_name": "SherrodBrown",
+    "name": "Sherrod Brown",
+    "relation": "official"
+  }],
+  "Cory Booker": [{
+    "id": 15808765,
+    "screen_name": "CoryBooker",
+    "name": "Cory Booker",
+    "relation": "official"
+  }, {
+    "id": 2167097881,
+    "screen_name": "SenBooker",
+    "name": "Sen. Cory Booker",
+    "relation": "official"
+  }],
+  "Kamala Harris": [{
+    "id": 803694179079458800,
+    "screen_name": "SenKamalaHarris",
+    "name": "Kamala Harris",
+    "relation": "official"
+  }, {
+    "id": 30354991,
+    "screen_name": "KamalaHarris",
+    "name": "Kamala Harris",
+    "relation": "official"
+  }],
+  "Joe Biden": [{
+    "id": 939091,
+    "screen_name": "JoeBiden",
+    "name": "Joe Biden",
+    "relation": "official"
+  }],
+  "Kirsten Gillibrand": [{
+    "id": 72198806,
+    "screen_name": "SenGillibrand",
+    "name": "Kirsten Gillibrand",
+    "relation": "official"
+  }, {
+    "id": 899978622416695300,
+    "screen_name": "gillibrandny",
+    "name": "Sen. Kirsten Gillibrand",
+    "relation": "official"
+  }]
+}

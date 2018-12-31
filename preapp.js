@@ -20,18 +20,16 @@ function updateMeta() {
     //console.log(res);
     if (!err) {
       res.forEach((row) => {
-        if (row['ready'] == false) {
+        if (row["ready"] == false) {
           var params = {screen_name: row["screen_name"]}
           t.get("users/show", params).then((user) => {
             updateID(row['id'], user['id_str']);
-            createTable("twitter_" + user['id_str']);
           }).catch((err) => {
             if (err) {
               console.log(err);
               console.log(params);
               console.log("ready == false");
             }
-            updateMeta();
           });
         } else {
           var params = {user_id: row["id"]}
@@ -43,7 +41,6 @@ function updateMeta() {
               console.log(params);
               console.log("ready == true");
             }
-            updateMeta();
           });
         }
       });
@@ -73,67 +70,45 @@ function updateSN(oldID, newSN) {
   });
 }
 
-function scrapeFollowers() {
-
-  var datetime = new Date();
-  var datestring = datetime.toUTCString();
-
-  conn.query("SELECT * FROM meta", (err, res, fields) => {
-    res.forEach((row) => {
-      var params = {user_id: row['id']};
-      var tablename = "twitter_" + row['id'].toString()
-
-      t.get("users/show", params).then((user) => {
-        conn.query("INSERT INTO " + tablename + " (date, followers) VALUES ?", [[[datestring, user.followers_count]]], (err, res, fields) => {
-          if (!err) {
-            //console.log("inserted correctly!");
-          } else {
-            console.log("insert error");
-            console.log(err);
-          }
-        });
-      }).catch((err) => {
-        if (err) {
-          console.log(err);
-          updateMeta();
-        }
-      })
-    });
-  });
-}
-
-function doesTableExist(table) {
-  conn.query("SELECT * FROM ?", [table], (err, res) => {
-    if (!err) {
-      return true;
-    }
-    return false;
-  });
-}
-
-function createTable(tablename) {
-  var sql = "CREATE TABLE " + tablename + " (date VARCHAR(256), followers INT)";
-  conn.query(sql, (err, res) => {
-    if (!err) {
-      console.log("Created Table", tablename);
-    } else {
-      console.log("Create Table Error on", tablename);
-      console.log(err)
-    }
-  });
-}
 
 
 updateMeta();
-new CronJob("0 * * * * *", () => {
-  console.log("update meta");
-  updateMeta();
-}, null, true, 'America/New_York');
 
-new CronJob("*/10 * * * * *", () => {
-  console.log("scrape followers");
-  scrapeFollowers();
-}, null, true, 'America/New_York');
+// var mode = 1;
+//
+// if (mode == 1) {
+//   var targets = {}
+//   var proms = [];
+//   Object.keys(pretargets).forEach((candidate) => {
+//     targets[candidate] = [];
+//     pretargets[candidate].forEach((screen_name) => {
+//       proms.push(t.get('users/show', {screen_name})
+//         .then((user) => {
+//           console.log(screen_name, user.screen_name);
+//           //console.log(user.id);
+//           targets[candidate].push({"id": user.id, "screen_name": user.screen_name, "name": user.name, "relation": "official"});
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//           throw error;
+//         })
+//       );
+//     })
+//   })
+//
+//   Promise.all(proms)
+//     .then(() => {
+//       console.log("done")
+//       fs.writeFileSync("targets/targets.json", JSON.stringify(targets));
+//       console.log("written");
+//     })
+//     .catch((err) => {
+//       console.log('err oops');
+//     })
+// } else if (mode == 2) {
+//
+// }
+
 
 
 
