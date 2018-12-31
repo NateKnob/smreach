@@ -31,7 +31,6 @@ function updateMeta() {
               console.log(params);
               console.log("ready == false");
             }
-            updateMeta();
           });
         } else {
           var params = {user_id: row["id"]}
@@ -43,7 +42,6 @@ function updateMeta() {
               console.log(params);
               console.log("ready == true");
             }
-            updateMeta();
           });
         }
       });
