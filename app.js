@@ -214,7 +214,9 @@ async function updateCachedTable() {
       var today = new Date(table[0]['date']);
       newTable.push(table[0]);
       for (var t = 1; t < table.length; t++) {
-        var tomorrow = new Date(table[t]);
+        var tomorrow = new Date(table[t]['date']);
+        // console.log(today, tomorrow);
+        // console.log(today.getDate(), tomorrow.getDate());
         if (diffDay(today, tomorrow)) {
           today = tomorrow;
           newTable.push(table[t]);
