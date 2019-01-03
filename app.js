@@ -232,7 +232,7 @@ async function updateCachedTable() {
   }
 }
 
-var cachedTable = updateCachedTable();
+var cachedTable = await updateCachedTable();
 var tableCacheTime = new Date();
 
 app.get('/update/', function(req, res) {
@@ -246,7 +246,7 @@ app.get('/', function(req, res) {
     //res.send(JSON.stringify({ a: 1 }));
     cacheAge = new Date().getTime() - tableCacheTime.getTime();
     if (cacheAge > 5000) {
-      cachedTable = updateCachedTable();
+      cachedTable = await updateCachedTable();
       tableCacheTime = new Date();
       res.send(JSON.stringify({"status":"refreshed", "table":cachedTable}));
     } else {
