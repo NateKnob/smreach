@@ -241,16 +241,16 @@ app.get('/update/', function(req, res) {
   res.send("done!");
 });
 
-app.get('/', function(req, res) {
+app.get('/', async function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     //res.send(JSON.stringify({ a: 1 }));
     cacheAge = new Date().getTime() - tableCacheTime.getTime();
     if (cacheAge > 5000) {
       cachedTable = await updateCachedTable();
       tableCacheTime = new Date();
-      res.send(JSON.stringify({"status":"refreshed", "table":cachedTable}));
+      res.send(JSON.stringify({"status":tableCacheTime, "table":cachedTable}));
     } else {
-      res.send(JSON.stringify({"status":"old", "table":cachedTable}));
+      res.send(JSON.stringify({"status":tableCacheTime, "table":cachedTable}));
     }
 
 });
