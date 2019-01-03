@@ -214,10 +214,10 @@ async function updateCachedTable() {
       var today = new Date(table[0]['date']);
       newTable.push(table[0]);
       for (var t = 1; t < table.length; t++) {
-        var tomorrow = new Date(table[i]);
+        var tomorrow = new Date(table[t]);
         if (diffDay(today, tomorrow)) {
           today = tomorrow;
-          newTable.push(table[i]);
+          newTable.push(table[t]);
         }
       }
       //console.log(meta['screen_name']);
