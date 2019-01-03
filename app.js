@@ -164,37 +164,36 @@ new CronJob("0 0 * * * *", () => {
 
 
 function getTableData() {
-  conn.query("SELECT * FROM meta", (err, meta, fields) => {
-    var x = meta.length;
-    var data = []
-    meta.forEach((row) => {
-      var params = {user_id: row['id']};
-      var tablename = "twitter_" + row['id'].toString()
+  return new Promise((resolve, reject) => {
+    conn.query("SELECT * FROM meta", (err, meta, fields) => {
+      var x = meta.length;
+      var data = []
+      meta.forEach((row) => {
+        var params = {user_id: row['id']};
+        var tablename = "twitter_" + row['id'].toString()
 
-      conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
-        if (!err) {
-          data.push({"meta":row, "table":tableres});
-          x -= 1;
-          if (x == 0) {
-            return data;
+        conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
+          if (!err) {
+            data.push({"meta":row, "table":tableres});
+            x -= 1;
+            if (x == 0) {
+              resolve(data);
+            }
+            //console.log("inserted correctly!");
+          } else {
+            reject(err);
+            console.log("insert error");
+            console.log(err);
           }
-          //console.log("inserted correctly!");
-        } else {
-          throw err;
-          console.log("insert error");
-          console.log(err);
-        }
+        });
       });
-    });
 
-    if (err) {
-      throw err;
-    }
+      if (err) {
+        reject(err);
+      }
+    });
   });
 }
-
-var cachedTable = [];
-
 
 function diffDay(d1, d2) {
   return !(d1.getFullYear() === d2.getFullYear() &&
@@ -202,35 +201,39 @@ function diffDay(d1, d2) {
     d1.getDate() === d2.getDate());
 }
 
-function updateCachedTable() {
+async function updateCachedTable() {
   try {
-    initialTable = getTableData();
+    initialTable = await getTableData();
     // for each twitter account
+    console.log("yayeet");
     for (var i = 0; i < initialTable.length; i++) {
       var meta = initialTable[i]['meta'];
       var table = initialTable[i]['table'];
 
       var newTable = [];
       var today = new Date(table[0]['date']);
-      newTable.append(table[0]);
-
-      for (var t = 1; i < table.length; t++) {
+      newTable.push(table[0]);
+      for (var t = 1; t < table.length; t++) {
         var tomorrow = new Date(table[i]);
-        if diffDay(today, tomorrow) {
+        if (diffDay(today, tomorrow)) {
           today = tomorrow;
-          newTable.append(table[i]);
+          newTable.push(table[i]);
         }
       }
+      //console.log(meta['screen_name']);
       initialTable[i]['table'] = newTable;
     }
+    console.log("yayeet2");
     return initialTable;
-
 
   } catch (err) {
     console.log("ERR!", err);
     return "err";
   }
 }
+
+var cachedTable = updateCachedTable();
+var tableCacheTime = new Date();
 
 app.get('/update/', function(req, res) {
   updateMeta();
@@ -241,7 +244,13 @@ app.get('/update/', function(req, res) {
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     //res.send(JSON.stringify({ a: 1 }));
-    res.send(JSON.stringify(updateCachedTable()));
+    cacheAge = new Date().getTime() - tableCacheTime.getTime();
+    if (cacheAge > 5000) {
+      res.send("Cache Refreshed!\n")
+      cachedTable = updateCachedTable();
+      tableCacheTime = new Date();
+    }
+    res.send(JSON.stringify(cachedTable));
 
 });
 
