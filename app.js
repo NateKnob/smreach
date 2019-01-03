@@ -12,6 +12,9 @@ var mysql = require('mysql');
 var app = express();
 
 var cred = {};
+
+console.log(process.env);
+
 if (process.env.NODE_ENV == "production") {
   cred['twitter'] = {
     "consumer_key": process.env.twitter_consumer_key
