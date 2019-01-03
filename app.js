@@ -152,16 +152,22 @@ function createTable(tablename) {
 
 
 updateMeta();
-new CronJob("*/5 * * * *", () => {
+new CronJob("0 0 */6 * * *", () => {
   console.log("update meta");
   updateMeta();
 }, null, true, 'America/New_York');
 
-new CronJob("*/30 * * * * *", () => {
+new CronJob("0 0 * * * *", () => {
   console.log("scrape followers");
   scrapeFollowers();
 }, null, true, 'America/New_York');
 
+
+app.get('/update/', function(req, res) {
+  updateMeta();
+  scrapeFollowers();
+  res.send("done!");
+}
 
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
@@ -177,7 +183,7 @@ app.get('/', function(req, res) {
 
         conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
           if (!err) {
-            data.push(tableres);
+            data.push({"meta":row, "table":tableres);
             x -= 1;
             if (x == 0) {
               res.send(JSON.stringify(data));
