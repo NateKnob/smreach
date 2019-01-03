@@ -163,6 +163,75 @@ new CronJob("0 0 * * * *", () => {
 }, null, true, 'America/New_York');
 
 
+function getTableData() {
+  conn.query("SELECT * FROM meta", (err, meta, fields) => {
+    var x = meta.length;
+    var data = []
+    meta.forEach((row) => {
+      var params = {user_id: row['id']};
+      var tablename = "twitter_" + row['id'].toString()
+
+      conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
+        if (!err) {
+          data.push({"meta":row, "table":tableres});
+          x -= 1;
+          if (x == 0) {
+            return data;
+          }
+          //console.log("inserted correctly!");
+        } else {
+          throw err;
+          console.log("insert error");
+          console.log(err);
+        }
+      });
+    });
+
+    if (err) {
+      throw err;
+    }
+  });
+}
+
+var cachedTable = [];
+
+
+function diffDay(d1, d2) {
+  return !(d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate());
+}
+
+function updateCachedTable() {
+  try {
+    initialTable = getTableData();
+    // for each twitter account
+    for (var i = 0; i < initialTable.length; i++) {
+      var meta = initialTable[i]['meta'];
+      var table = initialTable[i]['table'];
+
+      var newTable = [];
+      var today = new Date(table[0]['date']);
+      newTable.append(table[0]);
+
+      for (var t = 1; i < table.length; t++) {
+        var tomorrow = new Date(table[i]);
+        if diffDay(today, tomorrow) {
+          today = tomorrow;
+          newTable.append(table[i]);
+        }
+      }
+      initialTable[i]['table'] = newTable;
+    }
+    return initialTable;
+
+
+  } catch (err) {
+    console.log("ERR!", err);
+    return "err";
+  }
+}
+
 app.get('/update/', function(req, res) {
   updateMeta();
   scrapeFollowers();
@@ -172,35 +241,8 @@ app.get('/update/', function(req, res) {
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     //res.send(JSON.stringify({ a: 1 }));
+    res.send(JSON.stringify(updateCachedTable()));
 
-
-    conn.query("SELECT * FROM meta", (err, meta, fields) => {
-      var x = meta.length;
-      var data = []
-      meta.forEach((row) => {
-        var params = {user_id: row['id']};
-        var tablename = "twitter_" + row['id'].toString()
-
-        conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
-          if (!err) {
-            data.push({"meta":row, "table":tableres});
-            x -= 1;
-            if (x == 0) {
-              res.send(JSON.stringify(data));
-            }
-            //console.log("inserted correctly!");
-          } else {
-            res.status(500).send("query error!");
-            console.log("insert error");
-            console.log(err);
-          }
-        });
-      });
-
-      if (err) {
-        res.status(500).send("top level error change");
-      }
-    });
 });
 
 var port = process.env.PORT || 3000;
