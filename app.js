@@ -123,15 +123,50 @@ function createTable(tablename) {
 
 
 updateMeta();
-new CronJob("0 * * * * *", () => {
+new CronJob("*/5 * * * *", () => {
   console.log("update meta");
   updateMeta();
 }, null, true, 'America/New_York');
 
-new CronJob("*/10 * * * * *", () => {
+new CronJob("*/30 * * * * *", () => {
   console.log("scrape followers");
   scrapeFollowers();
 }, null, true, 'America/New_York');
+
+
+app.get('/', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    //res.send(JSON.stringify({ a: 1 }));
+
+
+    conn.query("SELECT * FROM meta", (err, meta, fields) => {
+      var x = Object.keys(meta).length;
+      var data = []
+      meta.forEach((row) => {
+        var params = {user_id: row['id']};
+        var tablename = "twitter_" + row['id'].toString()
+
+        conn.query("GET * FROM " + tablename, (err, tableres, fields) => {
+          if (!err) {
+            data.push(tableres);
+            x -= 1;
+            if (x == 0) {
+              res.send(JSON.stringify(data));
+            }
+            //console.log("inserted correctly!");
+          } else {
+            res.status(500).send("query error!");
+            console.log("insert error");
+            console.log(err);
+          }
+        });
+      });
+
+      if (err) {
+        res.status(500).send("top level error");
+      }
+    });
+});
 
 
 
