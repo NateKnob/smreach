@@ -175,7 +175,7 @@ app.get('/', function(req, res) {
         var params = {user_id: row['id']};
         var tablename = "twitter_" + row['id'].toString()
 
-        conn.query("GET * FROM " + tablename, (err, tableres, fields) => {
+        conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
           if (!err) {
             data.push(tableres);
             x -= 1;
