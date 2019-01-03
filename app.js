@@ -17,7 +17,7 @@ console.log(process.env);
 
 if (process.env.NODE_ENV == "production") {
   cred['twitter'] = {
-    "consumer_key": process.env.twitter_consumer_key
+    "consumer_key": process.env.twitter_consumer_key,
     "consumer_secret": process.env.twitter_consumer_secret,
     "access_token_key": process.env.twitter_access_token_key,
     "access_token_secret": process.env.twitter_access_token_secret,
