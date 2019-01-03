@@ -183,7 +183,7 @@ app.get('/', function(req, res) {
 
         conn.query("SELECT * FROM " + tablename, (err, tableres, fields) => {
           if (!err) {
-            data.push({"meta":row, "table":tableres);
+            data.push({"meta":row, "table":tableres});
             x -= 1;
             if (x == 0) {
               res.send(JSON.stringify(data));
