@@ -66,6 +66,9 @@ function updateMeta() {
           });
         }
       });
+    } else {
+      console.log("err!!!");
+      console.log(err);
     }
   })
 }
@@ -98,26 +101,31 @@ function scrapeFollowers() {
   var datestring = datetime.toUTCString();
 
   conn.query("SELECT * FROM meta", (err, res, fields) => {
-    res.forEach((row) => {
-      var params = {user_id: row['id']};
-      var tablename = "twitter_" + row['id'].toString()
+    if (err) {
+      console.log("err!!!");
+      console.log(err);
+    } else {
+      res.forEach((row) => {
+        var params = {user_id: row['id']};
+        var tablename = "twitter_" + row['id'].toString()
 
-      t.get("users/show", params).then((user) => {
-        conn.query("INSERT INTO " + tablename + " (date, followers) VALUES ?", [[[datestring, user.followers_count]]], (err, res, fields) => {
-          if (!err) {
-            //console.log("inserted correctly!");
-          } else {
-            console.log("insert error");
+        t.get("users/show", params).then((user) => {
+          conn.query("INSERT INTO " + tablename + " (date, followers) VALUES ?", [[[datestring, user.followers_count]]], (err, res, fields) => {
+            if (!err) {
+              //console.log("inserted correctly!");
+            } else {
+              console.log("insert error");
+              console.log(err);
+            }
+          });
+        }).catch((err) => {
+          if (err) {
             console.log(err);
+            updateMeta();
           }
-        });
-      }).catch((err) => {
-        if (err) {
-          console.log(err);
-          updateMeta();
-        }
-      })
-    });
+        })
+      });
+    }
   });
 }
 
@@ -161,7 +169,7 @@ app.get('/', function(req, res) {
 
 
     conn.query("SELECT * FROM meta", (err, meta, fields) => {
-      var x = Object.keys(meta).length;
+      var x = meta.length;
       var data = []
       meta.forEach((row) => {
         var params = {user_id: row['id']};
