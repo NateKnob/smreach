@@ -1,5 +1,4 @@
 var createError = require('http-errors');
-var cred = require('./credentials.json');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -11,6 +10,24 @@ var Twitter = require('twitter');
 var mysql = require('mysql');
 
 var app = express();
+
+var cred = {};
+if (process.env.NODE_ENV == "production") {
+  cred['twitter'] = {
+    "consumer_key": process.env.twitter_consumer_key
+    "consumer_secret": process.env.twitter_consumer_secret,
+    "access_token_key": process.env.twitter_access_token_key,
+    "access_token_secret": process.env.twitter_access_token_secret,
+  }
+  cred['mysql'] = {
+    "host"     : process.env.mysql_host,
+    "user"     : process.env.mysql_user,
+    "password" : process.env.mysql_password,
+    "database" : process.env.mysql_database
+  }
+} else {
+  cred = require('./credentials.json');
+}
 
 var t = new Twitter(cred['twitter']);
 var conn = mysql.createConnection(cred['mysql']);
@@ -168,6 +185,8 @@ app.get('/', function(req, res) {
     });
 });
 
+var port = process.env.PORT || 3000;
 
-
-module.exports = app;
+var server = app.listen(port, function () {
+    console.log('Server running at http://127.0.0.1:' + port + '/');
+});
