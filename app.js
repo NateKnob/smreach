@@ -232,7 +232,7 @@ async function updateCachedTable() {
   }
 }
 
-var cachedTable = await updateCachedTable();
+var cachedTable = updateCachedTable();
 var tableCacheTime = new Date();
 
 app.get('/update/', function(req, res) {
