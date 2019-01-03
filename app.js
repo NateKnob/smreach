@@ -167,7 +167,7 @@ app.get('/update/', function(req, res) {
   updateMeta();
   scrapeFollowers();
   res.send("done!");
-}
+});
 
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
