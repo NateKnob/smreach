@@ -232,7 +232,10 @@ async function updateCachedTable() {
   }
 }
 
-var cachedTable = updateCachedTable();
+var cachedTable = [];
+updateCachedTable().then((x) => {
+  cachedTable = x;
+})
 var tableCacheTime = new Date();
 
 app.get('/update/', function(req, res) {
@@ -241,16 +244,16 @@ app.get('/update/', function(req, res) {
   res.send("done!");
 });
 
-app.get('/', async function(req, res) {
+app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     //res.send(JSON.stringify({ a: 1 }));
     cacheAge = new Date().getTime() - tableCacheTime.getTime();
+      res.send(JSON.stringify({"status":tableCacheTime, "table":cachedTable}));
     if (cacheAge > 5000) {
-      cachedTable = await updateCachedTable();
-      tableCacheTime = new Date();
-      res.send(JSON.stringify({"status":tableCacheTime, "table":cachedTable}));
-    } else {
-      res.send(JSON.stringify({"status":tableCacheTime, "table":cachedTable}));
+      updateCachedTable().then((x) => {
+        cachedTable = x;
+        tableCacheTime = new Date();
+      });
     }
 
 });
