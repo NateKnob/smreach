@@ -14,6 +14,7 @@ var app = express();
 var cred = {};
 
 console.log(process.env);
+console.log("HELLO???");
 
 if (process.env.NODE_ENV == "production") {
   cred['twitter'] = {
