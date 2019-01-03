@@ -246,11 +246,12 @@ app.get('/', function(req, res) {
     //res.send(JSON.stringify({ a: 1 }));
     cacheAge = new Date().getTime() - tableCacheTime.getTime();
     if (cacheAge > 5000) {
-      res.send("Cache Refreshed!\n")
       cachedTable = updateCachedTable();
       tableCacheTime = new Date();
+      res.send(JSON.stringify({"status":"refreshed", "table":cachedTable}));
+    } else {
+      res.send(JSON.stringify({"status":"old", "table":cachedTable}));
     }
-    res.send(JSON.stringify(cachedTable));
 
 });
 
