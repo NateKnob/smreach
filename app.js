@@ -248,6 +248,7 @@ app.use(function(req, res, next) {
 
 app.get('/update/', function(req, res) {
   updateMeta();
+  setTimeout(scrapeFollowers, 2000);
   res.send("done!");
 });
 
