@@ -57,6 +57,7 @@ function updateMeta() {
           var params = {user_id: row["id"]}
           t.get("users/show", params).then((user) => {
             updateSN(row['id'], user['screen_name']);
+            updateDN(row['id'], user['name']);
           }).catch((err) => {
             if (err) {
               console.log(err);
@@ -198,7 +199,8 @@ function getTableData() {
 function diffDay(d1, d2) {
   return !(d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate());
+    d1.getDate() === d2.getDate() &&
+    d1.getHour()/6 == d2.getHour() / 6);
 }
 
 async function updateCachedTable() {
