@@ -248,7 +248,6 @@ app.use(function(req, res, next) {
 
 app.get('/update/', function(req, res) {
   updateMeta();
-  scrapeFollowers();
   res.send("done!");
 });
 
