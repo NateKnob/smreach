@@ -96,6 +96,17 @@ function updateSN(oldID, newSN) {
   });
 }
 
+function updateDN(oldID, newDN) {
+  conn.query("UPDATE meta SET name = ? WHERE id = ?", [newDN, oldID], (err) => {
+    if (!err) {
+      //console.log(res);
+    } else {
+      console.log("updateDN error");
+      console.log(err);
+    }
+  });
+}
+
 function scrapeFollowers() {
 
   var datetime = new Date();
@@ -200,7 +211,7 @@ function diffDay(d1, d2) {
   return !(d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate() &&
-    d1.getHour()/6 == d2.getHour() / 6);
+    d1.getHours()/6 == d2.getHours() / 6);
 }
 
 async function updateCachedTable() {
